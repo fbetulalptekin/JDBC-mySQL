@@ -5,20 +5,25 @@ public class JDBC02_Execute_ExecuteUpdate {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
 
         /*
- 	A) CREATE TABLE, DROP TABLE, ALTER TABLE gibi DDL ifadeleri icin sonuc kümesi (ResultSet)
- 	   dondurmeyen metotlar kullanilmalidir. Bunun icin JDBC'de 2 alternatif bulunmaktadir:
+ 	A) CREATE TABLE, DROP TABLE, ALTER TABLE gibi DDL ifadeleri icin
+ 	   sonuc kümesi (ResultSet) dondurmeyen metotlar kullanilmalidir.
+
+ 	   Bunun icin JDBC'de 2 alternatif bulunmaktadir:
 
  	    1) execute() metodu - boolean dondurur.
  	    2) executeUpdate() metodu - int deger dondurur.
 
  	B) - execute() metodu her tur SQL ifadesiyle kullanilabilen genel bir komuttur.
- 	   - execute(), Boolean bir deger dondurur. DDL islemlerinde false dondururken,
+ 	   - execute(), Boolean bir deger dondurur.
+ 	     DDL islemlerinde false dondururken,
  	     DML islemlerinde true deger dondurur.
+
  	   - Ozellikle, hangi tip SQL ifadesine hangi metodun uygun oldugunun bilinemedigi
  	     durumlarda tercih edilmektedir.
 
  	C) - executeUpdate() metodu ise INSERT, Update gibi DML islemlerinde yaygin kullanilir.
  	   - bu islemlerde islemden etkilenen satir sayisini dondurur.
+
  	   - Ayrıca, DDL islemlerinde de kullanilabilir ve bu islemlerde 0 dondurur.
     */
 
@@ -42,9 +47,9 @@ public class JDBC02_Execute_ExecuteUpdate {
 	    ========================================================================*/
 
             String createTable = "CREATE TABLE isciler" +
-                    "(id INT, " +
-                    "birim VARCHAR(10), " +
-                    "maas INT)";
+                                 "(id INT, " +
+                                 "birim VARCHAR(10), " +
+                                 "maas INT)";
 
             if (!st.execute(createTable)){
                 System.out.println("Isciler tablosu olusturuldu!");
@@ -68,8 +73,8 @@ public class JDBC02_Execute_ExecuteUpdate {
             System.out.println("=============== 1. Yontem ==============");
 
             String [] queries = {"INSERT INTO isciler VALUES(70, 'HR', 5000)",
-                    "INSERT INTO isciler VALUES(60, 'LAB', 3000)",
-                    "INSERT INTO isciler VALUES(50, 'ARGE', 4000)"};
+                                 "INSERT INTO isciler VALUES(60, 'LAB', 3000)",
+                                 "INSERT INTO isciler VALUES(50, 'ARGE', 4000)"};
 
             int count = 0;
             for (String each : queries) {
@@ -77,22 +82,23 @@ public class JDBC02_Execute_ExecuteUpdate {
             }
             System.out.println(count + " satir eklendi!");
 
-            // Ayri ayri sorgular ile veritabanina tekrar tekrar ulasmak islemlerin
-            // yavas yapilmasina yol acar. 10000 tane veri kaydi yapildigi dusunuldugunde
-            // bu kotu bir yaklasimdir.
+            // Ayri ayri sorgular ile veritabanina tekrar tekrar ulasmak islemlerin yavas yapilmasina yol acar.
+            // 10000 tane veri kaydi yapildigi dusunuldugunde
+            // bu pek iyi bir yaklasim değildir.
 
             System.out.println("=============== 2. Yontem ==============");
 
             // 2.YONTEM (addBatch ve executeBatch() metotlari ile)
             // -----------------------------------------------------
-            // addBatch metodu ile SQL ifadeleri gruplandirilabilir ve executeBatch()
-            // metodu ile veritabanina bir kere gonderilebilir.
-            // executeBatch() metodu bir int [] dizi dondurur. Bu dizi her bir ifade sonucunda
+            // addBatch metodu ile SQL ifadeleri gruplandirilabilir ve
+            // executeBatch() metodu ile veritabanina bir kerede gonderilebilir.
+            // executeBatch() metodu bir int [] dizi dondurur.
+            // Bu dizi her bir ifade sonucunda
             // etkilenen satir sayisini gosterir.
 
             String [] queries2 = {"INSERT INTO isciler VALUES(10, 'TEKNIK', 3000)",
-                    "INSERT INTO isciler VALUES(20, 'KANTIN', 2000)",
-                    "INSERT INTO isciler VALUES(30, 'ARGE', 5000)"};
+                                  "INSERT INTO isciler VALUES(20, 'KANTIN', 2000)",
+                                  "INSERT INTO isciler VALUES(30, 'ARGE', 5000)"};
 
             for (String each : queries2) { // Bu dongude her bir SQL komutunu torbaya atiyor
                 st.addBatch(each);
@@ -114,13 +120,13 @@ public class JDBC02_Execute_ExecuteUpdate {
 
             while(iscilerTablosu.next()){
                 System.out.println(iscilerTablosu.getInt(1) + " " +
-                        iscilerTablosu.getString(2) + " " +
-                        iscilerTablosu.getInt(3));
+                                   iscilerTablosu.getString(2) + " " +
+                                   iscilerTablosu.getInt(3));
             }
 
         /*=======================================================================
 		  ORNEK6: isciler tablosundaki maasi 5000'den az olan iscilerin maasina
-		   %10 zam yapiniz.
+		          %10 zam yapiniz.
 		========================================================================*/
 
             String updateQuery = "UPDATE isciler SET maas=maas*1.1 WHERE maas<5000";
@@ -139,16 +145,18 @@ public class JDBC02_Execute_ExecuteUpdate {
 
             while(iscilerTablosu2.next()){
                 System.out.println(iscilerTablosu2.getInt(1) + " " +
-                        iscilerTablosu2.getString(2) + " " +
-                        iscilerTablosu2.getInt(3));
+                                   iscilerTablosu2.getString(2) + " " +
+                                   iscilerTablosu2.getInt(3));
             }
 
         /*=======================================================================
-	      ORNEK7: Iscıler tablosundan birimi 'ARGE' olan iscileri siliniz.
+	      ORNEK8: Iscıler tablosundan birimi 'ARGE' olan iscileri siliniz.
 	     ========================================================================*/
 
             String deletequery = "delete from isciler where birim='ARGE'";
+
             int silinenSatirSayisi = st.executeUpdate(deletequery);
+
             System.out.println(silinenSatirSayisi + " satir guncellendi");
 
         /*=======================================================================
@@ -161,9 +169,10 @@ public class JDBC02_Execute_ExecuteUpdate {
 
             while(iscilerTablosu3.next()){
                 System.out.println(iscilerTablosu3.getInt(1) + " " +
-                        iscilerTablosu3.getString(2) + " " +
-                        iscilerTablosu3.getInt(3));
+                                   iscilerTablosu3.getString(2) + " " +
+                                   iscilerTablosu3.getInt(3));
             }
+
             con.close();
             st.close();
             iscilerTablosu.close();
